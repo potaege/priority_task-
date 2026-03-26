@@ -1,0 +1,616 @@
+/* ==========================================
+   CSS VARIABLES — สีหลักทั้งหมด
+   ========================================== */
+:root {
+    /* สีพื้นหลัง */
+    --bg: #0f0f13;
+    --surface: #18181f;
+    --border: #2a2a35;
+    /* ← เปลี่ยนจาก #e0dfd8 */
+
+    /* สี Priority */
+    --high: #ff4757;
+    --high-light: rgba(255, 71, 87, 0.08);
+    /* ← เปลี่ยนจาก #fdf0f0 */
+    --high-border: rgba(255, 71, 87, 0.25);
+    /* ← เปลี่ยนจาก #f5c0c0 */
+
+    --medium: #ffa502;
+    --medium-light: rgba(255, 165, 2, 0.08);
+    /* ← เปลี่ยนจาก #fffbeb */
+    --medium-border: rgba(255, 165, 2, 0.25);
+    /* ← เปลี่ยนจาก #fde68a */
+
+    --low: #2ed573;
+    --low-light: rgba(46, 213, 115, 0.08);
+    /* ← เปลี่ยนจาก #f0fdf4 */
+    --low-border: rgba(46, 213, 115, 0.25);
+    /* ← เปลี่ยนจาก #bbf7d0 */
+
+    /* ข้อความ */
+    --text-main: #e8e8f0;
+    /* ← เปลี่ยนจาก #1a1a1a */
+    --text-sub: #5a5a72;
+    /* ← เปลี่ยนจาก #6b7280 */
+
+    --accent: #7c6af7;
+    --card : #0f0f13;
+}
+
+/* ==========================================
+   BASE
+   ========================================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--bg);
+    font-family: 'Sarabun', sans-serif, system-ui;
+    padding: 40px 32px;
+    color: var(--text-main);
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 32px;
+}
+
+
+/* ==========================================
+   LAYER 1 — .board (CSS Grid 3 คอลัมน์)
+   ========================================== */
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+
+/* ==========================================
+   LAYER 2 — .column (กล่องใหญ่)
+   ส่วนที่เหมือนกันทุก column
+   ========================================== */
+.column {
+    background: var(--surface);
+    border: 5px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    /* ป้องกัน body ล้นออกนอกกล่อง */
+    display: flex;
+    flex-direction: column;
+    /* header อยู่บน body อยู่ล่าง */
+    min-height: 450px;
+}
+
+/* สีบนสุดของ column แต่ละอัน (top accent bar) */
+.col-high {
+    border-top: 4px solid var(--high);
+}
+
+.col-medium {
+    border-top: 4px solid var(--medium);
+}
+
+.col-low {
+    border-top: 4px solid var(--low);
+}
+
+
+/* ==========================================
+   LAYER 3a — .col-header (ส่วนบน)
+   ส่วนที่เหมือนกันทุก column
+   ========================================== */
+.col-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.col-title {
+    flex: 1;
+    /* ดันตัวเลขไปขวา */
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.col-count {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 100px;
+}
+
+/* จุดสีและ badge สีแยกตาม column */
+.col-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.col-high .col-dot {
+    background: var(--high);
+}
+
+.col-high .col-count {
+    background: var(--high-light);
+    color: var(--high);
+}
+
+.col-medium .col-dot {
+    background: var(--medium);
+}
+
+.col-medium .col-count {
+    background: var(--medium-light);
+    color: var(--medium);
+}
+
+.col-low .col-dot {
+    background: var(--low);
+}
+
+.col-low .col-count {
+    background: var(--low-light);
+    color: var(--low);
+}
+
+
+/* ==========================================
+   LAYER 3b — .col-body (ส่วนล่าง, เลื่อนได้)
+   ส่วนที่เหมือนกันทุก column
+   ========================================== */
+.col-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    /* เลื่อนได้เมื่อ card เยอะ */
+    max-height: 420px;
+}
+
+/* scrollbar บาง (optional) */
+.col-body::-webkit-scrollbar {
+    width: 4px;
+}
+
+.col-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.col-body::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+
+
+/* ==========================================
+   LAYER 4 — .card (กล่องงาน)
+   ส่วนที่เหมือนกันทุก card
+   ========================================== */
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    position: relative;
+    /* ให้ ::before วางตำแหน่งได้ */
+    padding-left: 20px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+/* .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+} */
+
+.card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* เส้นสีซ้ายของ card — แยกตาม column */
+.card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    border-radius: 4px 0 0 4px;
+}
+
+.col-high .card::before {
+    background: var(--high);
+}
+
+.col-medium .card::before {
+    background: var(--medium);
+}
+
+.col-low .card::before {
+    background: var(--low);
+}
+
+/* พื้นหลัง card อ่อนๆ ตาม column */
+.col-high .card {
+    background: var(--card);
+    border-color: var(--high-border);
+}
+
+.col-medium .card {
+    background: var(--card);
+    border-color: var(--medium-border);
+}
+
+.col-low .card {
+    background: var(--card);
+    border-color: var(--low-border);
+}
+
+/* ข้อความใน card */
+.card-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.card-desc {
+    font-size: 12px;
+    color: var(--text-sub);
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.card-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 100px;
+    background: rgba(0, 0, 0, 0.06);
+    color: var(--text-sub);
+}
+
+.action-bar {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+/* ส่วนที่เหมือนกันทุกปุ่ม */
+.action-btn {
+    flex: 1;
+    text-align: center;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ตามด้วยสีของแต่ละปุ่ม */
+.btn-cancel {
+    background: #fdf0f0;
+    color: #e03e3e;
+    border-color: #f5c0c0;
+}
+
+.btn-add {
+    background: #eff6ff;
+    color: #1d6fce;
+    border-color: #bfdbfe;
+}
+
+.btn-done {
+    background: #f0fdf4;
+    color: #16a34a;
+    border-color: #bbf7d0;
+}
+
+body {
+    background: #0f0f13;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    /* fixed = grid ไม่ scroll ตามหน้า */
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(124, 106, 247, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124, 106, 247, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ==========================================
+   MODAL / POPUP
+   ========================================== */
+#modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    backdrop-filter: blur(4px);
+}
+
+.modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.modal-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.modal-dot.high {
+    background: var(--high);
+}
+
+.modal-dot.medium {
+    background: var(--medium);
+}
+
+.modal-dot.low {
+    background: var(--low);
+}
+
+.modal-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.modal-close {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    color: var(--text-sub);
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+}
+
+.modal-body {
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.modal-row {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+}
+
+.modal-label {
+    font-size: 11px;
+    color: var(--text-sub);
+    min-width: 80px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding-top: 2px;
+}
+
+.modal-value {
+    font-size: 13px;
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+.modal-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+}
+
+.modal-badge.high {
+    background: rgba(255, 71, 87, 0.12);
+    color: var(--high);
+    border: 1px solid rgba(255, 71, 87, 0.25);
+}
+
+.modal-badge.medium {
+    background: rgba(255, 165, 2, 0.12);
+    color: var(--medium);
+    border: 1px solid rgba(255, 165, 2, 0.25);
+}
+
+.modal-badge.low {
+    background: rgba(46, 213, 115, 0.12);
+    color: var(--low);
+    border: 1px solid rgba(46, 213, 115, 0.25);
+}
+
+.modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.modal-actions-row {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-modal-edit {
+    width: 100%;
+    padding: 11px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: rgba(124, 106, 247, 0.08);
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.btn-modal-cancel {
+    flex: 1;
+    padding: 11px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 71, 87, 0.25);
+    background: rgba(255, 71, 87, 0.08);
+    color: var(--high);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.btn-modal-done {
+    flex: 1;
+    padding: 11px;
+    border-radius: 10px;
+    border: 1px solid rgba(46, 213, 115, 0.25);
+    background: rgba(46, 213, 115, 0.08);
+    color: var(--low);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.btn-modal-edit:hover,
+.btn-modal-cancel:hover,
+.btn-modal-done:hover {
+    transform: translateY(-2px);
+}   
+
+.edit-input {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-main);
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.edit-input:focus {
+    border-color: var(--accent);
+}
+
+.edit-textarea {
+    resize: none;
+    height: 90px;
+    line-height: 1.6;
+}
+
+.priority-selector {
+    display: flex;
+    gap: 8px;
+}
+
+.priority-btn {
+    flex: 1;
+    padding: 9px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-sub);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.priority-btn[data-value="low"].active {
+    background: rgba(46, 213, 115, 0.12);
+    color: var(--low);
+    border-color: rgba(46, 213, 115, 0.25);
+}
+
+.priority-btn[data-value="medium"].active {
+    background: rgba(255, 165, 2, 0.12);
+    color: var(--medium);
+    border-color: rgba(255, 165, 2, 0.25);
+}
+
+.priority-btn[data-value="high"].active {
+    background: rgba(255, 71, 87, 0.12);
+    color: var(--high);
+    border-color: rgba(255, 71, 87, 0.25);
+}
+
+#edit-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    backdrop-filter: blur(4px);
+}
+
+#add-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    backdrop-filter: blur(4px);
+}

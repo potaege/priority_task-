@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ประวัติ — Priority Board</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../history.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <div class="page-header">
+        <a href="/page/main.html" class="back-btn">←</a>
+        <div class="page-title-group">
+            <h1>ประวัติ</h1>
+            <p class="page-subtitle">รายการที่เสร็จสิ้นและยกเลิก</p>
+        </div>
+    </div>
+
+    <!-- Summary Bar -->
+    <div class="summary-bar">
+        <div class="summary-chip">
+            <span class="chip-num" id="total-count">—</span>
+            <span>รายการทั้งหมด</span>
+        </div>
+        <div class="summary-chip done-chip">
+            <span class="chip-num" id="done-count">—</span>
+            <span>เสร็จสิ้น</span>
+        </div>
+        <div class="summary-chip cancel-chip">
+            <span class="chip-num" id="cancel-count">—</span>
+            <span>ยกเลิก</span>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <button class="filter-chip active" data-filter="all">ทั้งหมด</button>
+        <button class="filter-chip chip-done" data-filter="done">✓ เสร็จสิ้น</button>
+        <button class="filter-chip chip-cancel" data-filter="cancel">✕ ยกเลิก</button>
+        <button class="filter-chip" data-filter="high">Priority สูง</button>
+        <button class="filter-chip" data-filter="medium">Priority กลาง</button>
+        <button class="filter-chip" data-filter="low">Priority ต่ำ</button>
+    </div>
+
+    <!-- History List -->
+    <div class="history-list" id="history-list">
+
+        <!-- Skeleton loading (ถูกแทนที่โดย JS) -->
+        <div class="skeleton-card">
+            <div class="skel-line medium"></div>
+            <div class="skel-line long"></div>
+            <div class="skel-line short"></div>
+        </div>
+        <div class="skeleton-card">
+            <div class="skel-line short"></div>
+            <div class="skel-line medium"></div>
+            <div class="skel-line long"></div>
+        </div>
+        <div class="skeleton-card">
+            <div class="skel-line long"></div>
+            <div class="skel-line medium"></div>
+            <div class="skel-line short"></div>
+        </div>
+
+    </div>
+
+    <script type="module" src="/page/js/history.js"></script>
+
+</body>
+
+</html>

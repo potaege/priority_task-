@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Priority Board</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+
+    <h1>Priority Board</h1>
+
+    <div class="board">
+
+        <!-- คอลัมน์ HIGH -->
+        <div class="column col-high">
+
+            <div class="col-header">
+                <span class="col-dot"></span>
+                <span class="col-title">Priority สูง</span>
+                <span class="col-count">2</span>
+            </div>
+
+            <div class="col-body" id="high-list">
+
+                
+
+            </div>
+        </div>
+
+        <div class="column col-medium">
+
+            <div class="col-header">
+                <span class="col-dot"></span>
+                <span class="col-title">Priority กลาง</span>
+                <span class="col-count">2</span>
+            </div>
+
+            <div class="col-body" id="medium-list">
+
+                
+
+            </div>
+        </div>
+
+        <!-- คอลัมน์ LOW -->
+        <div class="column col-low">
+
+            <div class="col-header">
+                <span class="col-dot"></span>
+                <span class="col-title">Priority ต่ำ</span>
+                <span class="col-count">2</span>
+            </div>
+
+            <div class="col-body" id="low-list">
+
+                
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="action-bar">
+    
+        <div class="action-btn btn-add">
+            เพิ่มรายการ
+        </div>
+    
+        <div class="action-btn btn-done" onclick="goToHistory()" >
+            ประวัติ
+        </div>
+    
+    </div>
+
+    <script type="module" src="/page/js/taskTable.js"></script>
+   
+    <script>
+        function goToHistory() {
+            window.location.href = '/page/history.html';
+        }
+    </script>
+    
+</body>
+
+
+
+</html>

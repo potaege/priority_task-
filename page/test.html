@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Board</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f0f13;
+            --surface: #18181f;
+            /* กรอบนอก */
+            --border: #2a2a35;
+            --high: #ff4757;
+            --high-bg: rgba(255, 71, 87, 0.08);
+            --medium: #ffa502;
+            --medium-bg: rgba(255, 165, 2, 0.08);
+            --low: #2ed573;
+            --low-bg: rgba(46, 213, 115, 0.08);
+            --text: #e8e8f0;
+            --muted: #5a5a72;
+            --accent: #7c6af7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Sarabun', sans-serif;
+            min-height: 100vh;
+            padding: 40px 32px;
+        }
+
+        /* Subtle grid background */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(124, 106, 247, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(124, 106, 247, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .wrapper {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--accent);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+
+        h1 span {
+            color: var(--accent);
+        }
+
+        .stats {
+            display: flex;
+            gap: 24px;
+        }
+
+        .stat {
+            text-align: right;
+        }
+
+        .stat-num {
+            font-family: 'Space Mono', monospace;
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        /* Filter bar */
+        .filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 28px;
+        }
+
+        .filter-btn {
+            padding: 7px 16px;
+            border-radius: 100px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--muted);
+            font-family: 'Sarabun', sans-serif;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--accent);
+            color: var(--text);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        /* Board */
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .column {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            animation: fadeUp 0.5s ease both;
+        }
+
+        .column:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+
+        .column:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .column:nth-child(3) {
+            animation-delay: 0.25s;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .col-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .col-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .col-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .col-count {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            padding: 3px 9px;
+            border-radius: 100px;
+            background: var(--border);
+            color: var(--muted);
+        }
+
+        /* HIGH */
+        .col-high .col-dot {
+            background: var(--high);
+            box-shadow: 0 0 8px var(--high);
+        }
+
+        .col-high .col-count {
+            color: var(--high);
+            background: var(--high-bg);
+        }
+
+        /* MEDIUM */
+        .col-medium .col-dot {
+            background: var(--medium);
+            box-shadow: 0 0 8px var(--medium);
+        }
+
+        .col-medium .col-count {
+            color: var(--medium);
+            background: var(--medium-bg);
+        }
+
+        /* LOW */
+        .col-low .col-dot {
+            background: var(--low);
+            box-shadow: 0 0 8px var(--low);
+        }
+
+        .col-low .col-count {
+            color: var(--low);
+            background: var(--low-bg);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            border-radius: 3px 0 0 3px;
+        }
+
+        .col-high .card::before {
+            background: var(--high);
+        }
+
+        .col-medium .card::before {
+            background: var(--medium);
+        }
+
+        .col-low .card::before {
+            background: var(--low);
+        }
+
+        .card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .card-desc {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .tag {
+            font-size: 11px;
+            padding: 3px 9px;
+            border-radius: 100px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .tag-dev {
+            background: rgba(124, 106, 247, 0.15);
+            color: #a89af8;
+        }
+
+        .tag-design {
+            background: rgba(255, 71, 87, 0.12);
+            color: #ff6b7a;
+        }
+
+        .tag-qa {
+            background: rgba(46, 213, 115, 0.12);
+            color: #4dd88a;
+        }
+
+        .tag-pm {
+            background: rgba(255, 165, 2, 0.12);
+            color: #ffb82e;
+        }
+
+        .assignee {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0;
+        }
+
+        .a1 {
+            background: #7c6af7;
+            color: #fff;
+        }
+
+        .a2 {
+            background: #ff4757;
+            color: #fff;
+        }
+
+        .a3 {
+            background: #2ed573;
+            color: #0f0f13;
+        }
+
+        .a4 {
+            background: #ffa502;
+            color: #0f0f13;
+        }
+
+        .a5 {
+            background: #1e90ff;
+            color: #fff;
+        }
+
+        .due {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        /* Add button */
+        .add-btn {
+            width: 100%;
+            margin-top: 6px;
+            padding: 10px;
+            border: 1px dashed var(--border);
+            border-radius: 10px;
+            background: transparent;
+            color: var(--muted);
+            font-size: 13px;
+            font-family: 'Sarabun', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <header>
+            <div>
+                <div class="logo">TASKBOARD v1.0</div>
+                <h1>งานทั้งหมด <span>/</span> Q2</h1>
+            </div>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-num" style="color:var(--high)">3</div>
+                    <div class="stat-label">สูง</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num" style="color:var(--medium)">4</div>
+                    <div class="stat-label">กลาง</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num" style="color:var(--low)">3</div>
+                    <div class="stat-label">ต่ำ</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="filters">
+            <button class="filter-btn active">ทั้งหมด</button>
+            <button class="filter-btn">Dev</button>
+            <button class="filter-btn">Design</button>
+            <button class="filter-btn">QA</button>
+            <button class="filter-btn">PM</button>
+        </div>
+
+        <div class="board">
+
+            <!-- HIGH -->
+            <div class="column col-high">
+                <div class="col-header">
+                    <div class="col-title">
+                        <div class="col-dot"></div>
+                        Priority สูง
+                    </div>
+                    <div class="col-count">3</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">แก้ไข Bug หน้า Checkout</div>
+                    <div class="card-desc">ผู้ใช้ไม่สามารถกดยืนยันคำสั่งซื้อได้ในบางกรณี</div>
+                    <div class="card-footer">
+                        <span class="tag tag-dev">Dev</span>
+                        <div style="display:flex;align-items:center;gap:8px">
+                            <span class="due">24 มี.ค.</span>
+                            <div class="assignee a2">KP</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Deploy ระบบ Payment ใหม่</div>
+                    <div class="card-desc">เชื่อมต่อ API กับ provider รายใหม่ให้เสร็จก่อนสิ้นเดือน</div>
+                    <div class="card-footer">
+                        <span class="tag tag-dev">Dev</span>
+                        <div style="display:flex;align-items:center;gap:8px">
+                            <span class="due">31 มี.ค.</span>
+                            <div class="assignee a1">AT</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Security Audit รอบ Q2</div>
+                    <div class="card-desc">ตรวจสอบ authentication flow และ data encryption</div>
+                    <div class="card-footer">
+                        <span class="tag tag-qa">QA</span>
+                        <div style="display:flex;align-items:center;gap:8px">
+                            <span class="due">28 มี.ค.</span>
+                            <div class="assignee a5">NS</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="add-btn">+ เพิ่มงาน</button>
+            </div>
+
+            <!-- MEDIUM -->
+            <div class="column col-medium">
+                <div class="col-header">
+                    <div class="col-title">
+                        <div class="col-dot"></div>
+                        Priority กลาง
+                    </div>
+                    <div class="col-count">4</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Redesign หน้า Dashboard</div>
+                    <div class="card-desc">ปรับ layout ให้รองรับ mobile ดีขึ้น ตาม feedback ล่าสุด</div>
+                    <div class="card-footer">
+                        <span class="tag tag-design">Design</span>
+                        <div style="display:flex;align-items:center;gap:8px">
+                            <span class="due">5 เม.ย.</span>
+                            <div class="assignee a3">TN</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">เขียน Unit Test ส่วน API</div>
+                    <div class="card-desc">ครอบคลุม endpoint หลักทั้งหมดให้ได้ coverage 80%</div>
+                    <div class="card-footer">
+                        <span class="tag tag-qa">QA</span>
+                        <div style="display:flex;align-items:center;gap:8px">
+                            <span class="due">8 เม.ย.</span>
+                            <div class="assignee a5">NS</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">อัปเดต Onboarding Flow</div>
+                    <div class="card-desc">ลดขั้นตอนลงจาก 7 หน้าเหลือ 4 หน้า</div>
+                    <div class="card-footer">
+                        <span class="tag tag-pm">PM</span>
+                        <div style="display:flex;align-items:center;gap:8px">
+                            <span class="due">10 เม.ย.</span>
+                            <div class="assignee a4">WC</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Migrate Database เป็น PostgreSQL 16</div>
+                    <div class="card-desc">วางแผนและทดสอบ migration script บน staging</div>
+                    <div class="card-footer">
+                        <span class="tag tag-dev">Dev</span>
+                        <div style="display:flex;align-items:center;gap:8px">
+                            <span class="due">15 เม.ย.</span>
+                            <div class="assignee a1">AT</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="add-btn">+ เพิ่มงาน</button>
+            </div>
+
+            <!-- LOW -->
+            <div class="column col-low">
+                <div class="col-header">
+                    <div class="col-title">
+                        <div class="col-dot"></div>
+                        Priority ต่ำ
+                    </div>
+                    <div class="col-count">3</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">อัปเดต Design System</div>
+                    <div class="card-desc">เพิ่ม component ใหม่ตาม spec ที่ทีมออกแบบไว้</div>
+                    <div class="card-footer">
+                        <span class="tag tag-design">Design</span>
+                        <div style="display:flex;align-items:center;gap:8px">
+                            <span class="due">20 เม.ย.</span>
+                            <div class="assignee a3">TN</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">เขียน Documentation API v3</div>
+                    <div class="card-desc">อัปเดต Swagger docs ให้ตรงกับ endpoint ปัจจุบัน</div>
+                    <div class="card-footer">
+                        <span class="tag tag-dev">Dev</span>
+                        <div style="display:flex;align-items:center;gap:8px">
+                            <span class="due">25 เม.ย.</span>
+                            <div class="assignee a2">KP</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Refactor โค้ด Legacy Module</div>
+                    <div class="card-desc">ปรับโครงสร้างโค้ดเก่าให้อ่านง่ายและ maintainable มากขึ้น</div>
+                    <div class="card-footer">
+                        <span class="tag tag-dev">Dev</span>
+                        <div style="display:flex;align-items:center;gap:8px">
+                            <span class="due">30 เม.ย.</span>
+                            <div class="assignee a1">AT</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="add-btn">+ เพิ่มงาน</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+    </script>
+</body>
+
+</html>
+
+<!-- <div class="card">
+    <div class="card-title">อัปเดต Design System</div>
+    <div class="card-desc">เพิ่ม component ใหม่ตาม spec</div>
+    <div class="card-tag">Design</div>
+</div>
+
+<div class="card">
+    <div class="card-title">อัปเดต Design System</div>
+    <div class="card-desc">เพิ่ม component ใหม่ตาม spec</div>
+    <div class="card-tag">Design</div>
+</div>
+<div class="card">
+    <div class="card-title">อัปเดต Design System</div>
+    <div class="card-desc">เพิ่ม component ใหม่ตาม spec</div>
+    <div class="card-tag">Design</div>
+</div>
+<div class="card">
+    <div class="card-title">อัปเดต Design System</div>
+    <div class="card-desc">เพิ่ม component ใหม่ตาม spec</div>
+    <div class="card-tag">Design</div>
+</div>
+
+<div class="card">
+    <div class="card-title">เขียน Documentation</div>
+    <div class="card-desc">อัปเดต Swagger docs ให้ตรงกัน</div>
+    <div class="card-tag">Dev</div>
+</div> -->
